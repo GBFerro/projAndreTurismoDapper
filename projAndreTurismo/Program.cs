@@ -1,6 +1,6 @@
 ﻿using Controllers;
 using Models;
-using Repositories;
+
 
 internal class Program
 {
@@ -284,7 +284,7 @@ internal class Program
 
         //Console.WriteLine(new PackageController().Insert(package));
         //Console.WriteLine(new TicketController().Update(ticket));
-        Console.WriteLine(new PackageController().Delete(1));
+        //Console.WriteLine(new PackageController().Delete(1));
 
         new PackageController().FindAll().ForEach(x => Console.WriteLine(x + "\n\n"));
     }

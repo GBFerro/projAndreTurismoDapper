@@ -35,9 +35,9 @@ namespace Repositories
             using (Conn)
             {
                 Conn.Open();
-                list = (List<Package>)Conn.Query<Package, Hotel, Address, City, Client, Address, City, Package>(GETALL, (package, hotel, addressH, cityH, client, addressC, cityC)
-                    => { package.Hotel = hotel; package.Hotel.Address = addressH; package.Hotel.Address.City = cityH; package.Client = client;
-                        package.Client.Address = addressC; package.Client.Address.City = cityC; return package;
+                list = (List<Package>)Conn.Query<Package, Hotel, Client, Ticket, Address, City, Package>(GETALL, (package, hotel, client, ticket, address, city)
+                    => {package.Hotel.Address.City = city; package.Hotel.Address = address; package.Hotel = hotel; package.Client = client; 
+                        package.Ticket = ticket ; return package;
                     });
                 //(GETALL, (package, hotel, addressHotel, cityHotel, client, addressClient, cityClient, ticket, departure, cityD, arrival, cityA) =>
                 //{ package.Hotel = hotel; package.Hotel.Address = addressHotel; package.Hotel.Address.City = cityHotel; package.Client = client;
