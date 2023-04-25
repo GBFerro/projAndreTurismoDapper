@@ -35,18 +35,65 @@ namespace Repositories
             using (Conn)
             {
                 Conn.Open();
-                list = (List<Package>)Conn.Query<Package, Hotel, Client, Ticket, Address, City, Package>(GETALL, (package, hotel, client, ticket, address, city)
-                    => {package.Hotel.Address.City = city; package.Hotel.Address = address; package.Hotel = hotel; package.Client = client; 
-                        package.Ticket = ticket ; return package;
-                    });
-                //(GETALL, (package, hotel, addressHotel, cityHotel, client, addressClient, cityClient, ticket, departure, cityD, arrival, cityA) =>
-                //{ package.Hotel = hotel; package.Hotel.Address = addressHotel; package.Hotel.Address.City = cityHotel; package.Client = client;
-                //package.Client.Address = addressClient; package.Client.Address.City = cityClient; ticket.Departure = departure; 
-                //ticket.Departure.City = cityD; ticket.Arrival = arrival; ticket.Arrival.City = cityA; return package; });
+                list = (List<Package>)Conn.Query<Package>(GETALL, new[]
+                                {
+                    typeof(Package),
+                    typeof(Hotel),
+                    typeof(Address),
+                    typeof(City),
+                    typeof(Ticket),
+                    typeof(Address),
+                    typeof(City),
+                    typeof(Address),
+                    typeof(City),
+                    typeof(Client),
+                    typeof(Address),
+                    typeof(City)
+                },
+                obj =>
+                {
+                    Package package = obj[0] as Package;
+                    Hotel hotel = obj[1] as Hotel;
+                    Address addressHotel = obj[2] as Address;
+                    City cityHotel = obj[3] as City;
+                    Ticket ticket = obj[4] as Ticket;
+                    Address addressDeparture = obj[5] as Address;
+                    City cityDeparture = obj[6] as City;
+                    Address addressArrival = obj[7] as Address;
+                    City cityArrival = obj[8] as City;
+                    Client client = obj[9] as Client;
+                    Address addressClient = obj[10] as Address;
+                    City cityClient = obj[11] as City;
+
+                    package.Hotel = hotel;
+                    package.Hotel.Address = addressHotel;
+                    package.Hotel.Address.City = cityHotel;
+                    package.Ticket = ticket;
+                    package.Ticket.Departure = addressDeparture;
+                    package.Ticket.Departure.City = cityDeparture;
+                    package.Ticket.Arrival = addressArrival;
+                    package.Ticket.Arrival.City = cityArrival;
+                    package.Client = client;
+                    package.Client.Address = addressClient;
+                    package.Client.Address.City = cityClient;
+
+                    //addressHotel.City = cityHotel;
+                    //hotel.Address = addressHotel;
+                    //package.Hotel = hotel;
+                    //addressDeparture.City = cityDeparture;
+                    //ticket.Departure = addressDeparture;
+                    //addressArrival.City = cityArrival;
+                    //ticket.Arrival = addressArrival;
+                    //package.Ticket = ticket;
+                    //addressClient.City = cityClient;
+                    //client.Address = addressClient;
+                    //package.Client = client;
+
+                    return package;
+                });
             }
             return list;
         }
-
         public int Insert(Package package, string INSERT)
         {
             try
@@ -57,7 +104,7 @@ namespace Repositories
                     Conn.Open();
                     id = Conn.ExecuteScalar<int>(INSERT, new
                     {
-                        @IdHotel = package.Hotel.Id, 
+                        @IdHotel = package.Hotel.Id,
                         @IdClient = package.Client.Id,
                         @IdTicket = package.Ticket.Id,
                         @RegisterDate = package.RegisterDate,
